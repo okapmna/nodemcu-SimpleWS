@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Sensor Suhu</title>
+    <script>
+        let socket;
+
+        function initWebSocket() {
+            socket = new WebSocket('ws://192.168.1.24:81/');
+            socket.onmessage = function (event) {
+                document.getElementById("temperature").innerText = event.data + " °C";
+            };
+            socket.onerror = function (error) {
+                console.error("WebSocket Error: ", error);
+            };
+        }
+    </script>
+</head>
+
+<body onload="initWebSocket()">
+    <h1>Sensor Suhu</h1>
+    <p>Suhu saat ini: <span id="temperature">--</span></p>
+</body>
+
+</html>

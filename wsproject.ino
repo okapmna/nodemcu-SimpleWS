@@ -8,7 +8,7 @@
 const char* ssid = "NYUDIS";
 const char* password = "87654321C";
 
-#define DHTPIN D2
+#define DHTPIN D5
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -76,6 +76,7 @@ void loop() {
 
       webSocket.broadcastTXT(espString); // Broadcast all client
       Serial.println("Data send: " + espString);
+      Serial.println(relayStatus);
     } else {
       Serial.println("Gagal membaca data dari sensor!");
     }

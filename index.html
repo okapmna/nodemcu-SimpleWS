@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NodeMCU Control</title>
+</head>
+
+<body>
+    <h1>NodeMCU</h1>
+    <div id="data">
+        <h3>Sensor</h3>
+        <p>Suhu: <span id="tempC"></span> C</p>
+        <p>Suhu: <span id="tempF"></span> F</p>
+        <p>Kelembapan: <span id="humidity"></span> %</p>
+    </div>
+
+    <div>
+        <h2>Relay Control </h2>
+        <input type="range" id="relaySlider" min="0" max="1" step="1" onchange="updateRelay(this.value)">
+        <p id="relayStatus">OFF</p>
+    </div>
+
+    <script>
+
+
+
+
+        // Connect to NodeMCU WS
+        const socket = new WebSocket('ws://192.168.1.15:81/');
+
+        socket.onopen = function (event) {
+            console.log('Koneksi WebSocket Dibuka');
+        };
+
+        //Json Handle
+        socket.onmessage = function (event) {
+            try {
+                // Parse data JSON recive
+                const data = JSON.parse(event.data);
+
+                // Update html element with data
+                document.getElementById('tempC').innerText = data.tempC;
+                document.getElementById('tempF').innerText = data.tempF;
+                document.getElementById('humidity').innerText = data.humidity;
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+            }
+        };
+
+        //Handle control relay to Server
+        function turnOn() {
+            socket.send("ON");
+        }
+
+        function turnOff() {
+            socket.send("OFF");
+        }
+
+
+        //Handle control relay to HTML
+        function updateRelay(value) {
+            if (value == 1) {
+                turnOn()
+                document.getElementById('relayStatus').innerText = 'ON';
+            } else {
+                turnOff();
+                document.getElementById('relayStatus').innerText = 'OFF';
+            }
+        }
+
+
+        //Handle close and Error connection WS
+        socket.onclose = function (event) {
+            console.log('Koneksi WebSocket Ditutup');
+        };
+
+        socket.onerror = function (error) {
+            console.error('WebSocket Error:', error);
+        };
+
+
+
+    </script>
+</body>
+
+</html>
